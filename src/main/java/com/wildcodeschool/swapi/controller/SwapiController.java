@@ -1,5 +1,4 @@
 package com.wildcodeschool.swapi.controller;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wildcodeschool.swapi.model.People;
@@ -10,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriBuilder;
+import com.wildcodeschool.sea8.project2_data_mining.util.ProxyConfiguration;
 
 import reactor.core.publisher.Mono;
 
@@ -29,11 +29,13 @@ public class SwapiController {
         Planet planetObject = null;
         // TODO : call the API and retrieve the planet
         
-        WebClient webClient = WebClient.create(SWAPI_URL);
+        WebClient webClient = WebClient.create(SWAPI_URL)
+                .clientConnector(ProxyConfiguration.getProxiedConnector());
+                
         Mono<String> call = webClient.get()
             .uri(uriBuilder -> uriBuilder
                     .queryParam("/planet/{id}/")
-                    .build())   
+                    .build(id))   
             .retrieve()
             .bodyToMono(String.class);
 
