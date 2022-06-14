@@ -9,6 +9,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.util.UriBuilder;
+
 import reactor.core.publisher.Mono;
 
 @Controller
@@ -26,7 +28,23 @@ public class SwapiController {
 
         Planet planetObject = null;
         // TODO : call the API and retrieve the planet
+        String url = "https://swapi.dev/";
+        WebClient webClient = WebClient.create(url);
+        Mono<String> call = webClient.get()
+            .uri(uriBuilder -> uriBuilder
+                    .queryParam("/planet/{id}/")
+                    .build())   
+            .retrieve()
+            .bodyToMono(String.class);
 
+        String response = call.block();
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            planetObject = objectMapper.readValue(response, Planet.class);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
         model.addAttribute("planetInfos", planetObject);
 
         return "planet";
