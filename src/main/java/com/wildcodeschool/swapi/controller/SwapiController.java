@@ -28,8 +28,8 @@ public class SwapiController {
 
         Planet planetObject = null;
         // TODO : call the API and retrieve the planet
-        String url = "https://swapi.dev/";
-        WebClient webClient = WebClient.create(url);
+        
+        WebClient webClient = WebClient.create(SWAPI_URL);
         Mono<String> call = webClient.get()
             .uri(uriBuilder -> uriBuilder
                     .queryParam("/planet/{id}/")
